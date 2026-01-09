@@ -1,7 +1,7 @@
 # Python 3.12
 
 discord~=2.3.2
-aiohttp~=3.9.5
+aiohttp~=3.12.14
 caesarcipher~=1.0
 oxford~=0.1.4
 pymediawiki~=0.7.4

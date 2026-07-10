@@ -1,6 +1,6 @@
 # Python 3.12
 
-discord~=2.3.2
+discord.py
 aiohttp~=3.12.14
 caesarcipher~=1.0
 oxford~=0.1.4

@@ -86,6 +86,8 @@ class DevCog(commands.Cog):
 			case 'unload':
 				msg = await ctx.send(f'Unloading...')
 				for cog in cogs:
+					if cog == "cogs.dev":
+						continue
 					try:
 						await self.bot.unload_extension(cog)
 						botutils.log(f'{cog} Unloaded.')
@@ -93,7 +95,7 @@ class DevCog(commands.Cog):
 					except commands.errors.ExtensionNotLoaded:
 						pass
 				if len(done_cogs) > 0:
-					await msg.edit(content="Loading complete!")
+					await msg.edit(content="Unloading complete!")
 				else:
 					await msg.edit(content="Error: Cog(s) already unloaded.")
 

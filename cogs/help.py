@@ -131,7 +131,7 @@ class Help(commands.Cog):
 		self._original_help_command = bot.help_command
 		bot.help_command = JunoHelp()
 		bot.help_command.cog = self
-		botutils.log("Help Command Ready.")
+		botutils.log("Help Command Ready!")
 
 	def cog_unload(self):
 		self.bot.help_command = self._original_help_command

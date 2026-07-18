@@ -120,7 +120,11 @@ class DevCog(commands.Cog):
 				await ctx.send("Error: Disc not valid.")
 
 	@commands.command()
-	async def test(self, ctx: commands.Context):
+	async def test(self, ctx: commands.Context, test_types: commands.Greedy[typing.Literal["embed", "embedjson", "time", "tryreply", "colors"]]):
+		run_all = False
+		if not test_types:
+			run_all = True
+
 		print("TEST")
 		embed = discord.Embed(title="Title", description="[Test Link](https://www.youtube.com)",
 							  color=random.randint(0, 0xffffff), url="https://www.google.com/")
@@ -131,11 +135,60 @@ class DevCog(commands.Cog):
 		embed.add_field(name="Field 1", value="value 1")
 		embed.add_field(name="Field 2", value="value 2")
 		embed.add_field(name="Field 3", value="value 3")
-		await ctx.send(embed=embed)
-		emb_json = json.dumps(embed.to_dict(), indent='\t', ensure_ascii=False)
-		await ctx.send(f"```json\n{emb_json}\n```")
-		await ctx.send(f"<t:{int(calendar.timegm(ctx.message.created_at.utctimetuple()))}>")
-		await botutils.tryreply(ctx, "Test")
+		if "embed" in test_types or run_all:
+			await ctx.send(embed=embed)
+		if "embedjson" in test_types or run_all:
+			emb_json = json.dumps(embed.to_dict(), indent='\t', ensure_ascii=False)
+			await ctx.send(f"```json\n{emb_json}\n```")
+		if "time" in test_types or run_all:
+			await ctx.send(f"<t:{int(calendar.timegm(ctx.message.created_at.utctimetuple()))}>")
+		if "tryreply" in test_types or run_all:
+			await botutils.tryreply(ctx, "Test")
+		if "colors" in test_types or run_all:
+			colors = {
+				"teal":         discord.Color.teal(),
+				"dark_teal":    discord.Color.dark_teal(),
+				"brand_green":  discord.Color.brand_green(),
+				"green":        discord.Color.green(),
+				"dark_green":   discord.Color.dark_green(),
+				"blue":         discord.Color.blue(),
+				"dark_blue":    discord.Color.dark_blue(),
+				"purple":       discord.Color.purple(),
+				"dark_purple":  discord.Color.dark_purple(),
+				"magenta":      discord.Color.magenta(),
+				"dark_magenta": discord.Color.dark_magenta(),
+				"gold":         discord.Color.gold(),
+				"dark_gold":    discord.Color.dark_gold(),
+				"orange":       discord.Color.orange(),
+				"dark_orange":  discord.Color.dark_orange(),
+				"brand_red":    discord.Color.brand_red(),
+				"red":          discord.Color.red(),
+				"dark_red":     discord.Color.dark_red(),
+				"lighter_grey": discord.Color.lighter_grey(),
+				"dark_grey":    discord.Color.dark_grey(),
+				"light_grey":   discord.Color.light_grey(),
+				"darker_grey":  discord.Color.darker_grey(),
+				"og_blurple":   discord.Color.og_blurple(),
+				"blurple":      discord.Color.blurple(),
+				"greyple":      discord.Color.greyple(),
+				"ash_theme":    discord.Color.ash_theme(),
+				"dark_theme":   discord.Color.dark_theme(),
+				"onyx_theme":   discord.Color.onyx_theme(),
+				"light_theme":  discord.Color.light_theme(),
+				"fuchsia":      discord.Color.fuchsia(),
+				"yellow":       discord.Color.yellow(),
+				"ash_embed":    discord.Color.ash_embed(),
+				"dark_embed":   discord.Color.dark_embed(),
+				"onyx_embed":   discord.Color.onyx_embed(),
+				"light_embed":  discord.Color.light_embed(),
+				"pink":         discord.Color.pink()
+			}
+			for color_name, color in colors.items():
+				hex_color = str(color).upper().replace('#', '')
+
+				img = f"https://dummyimage.com/300/{hex_color}/&text=+"
+				embed = botutils.embed_template(footer=f'#{hex_color}', color=color, image=img)
+				await ctx.send(f"`{color_name}` (`discord.Color.{color_name}()`)", embed=embed)
 
 	@commands.command(aliases=('autoerror',))
 	async def auto_error(self, ctx: commands.Context):

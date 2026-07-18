@@ -54,8 +54,8 @@ class Utility(commands.Cog):
 
 	@commands.guild_only()
 	@commands.command(
-		extras={'example': 'gg', 'signature': '[New Prefix/"reset"]'},
-		description="Changes the server's prefix to the specified prefix. If blank, it'll show the current server's prefix instead. If is \"reset\", it'll reset the prefix to the default (`g!`)"
+		extras={'example': 'j-', 'signature': '[New Prefix/"reset"]'},
+		description="Changes the server's prefix to the specified prefix. If blank, it'll show the current server's prefix instead. If is \"reset\", it'll reset the prefix to the default (`j!`)"
 	)
 	async def prefix(self, ctx: commands.Context, new_prefix: typing.Optional[str]):
 		if new_prefix:

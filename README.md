@@ -14,6 +14,7 @@ that just built around afterward.
 - [ ] Add subcommands for `j!morse`.
 - [ ] Add subcommands for `j!binary`.
 - [ ] Add setup instructions to this README file.
+- [ ] Update this TODO list to reflect everything I actually have yet to do.
 
 ## Credits:
 

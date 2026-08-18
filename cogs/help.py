@@ -9,8 +9,9 @@ class JunoHelp(commands.MinimalHelpCommand):
 	with open('assets/perms.json') as f:
 		PERMS = json.load(f)
 
+	command_name: str
+
 	def __init__(self, **options):
-		self.command_name = None
 		self.appinfo = None
 		super().__init__(**options, command_attrs={
 			"description": "Shows a list of all the commands of the bot or the details of said commands.",
@@ -53,7 +54,11 @@ class JunoHelp(commands.MinimalHelpCommand):
 		await destination.send(embed=embed)
 
 	async def send_command_help(self, command: commands.Command):
-		await command.can_run(self.context)
+		destination = self.get_destination()
+		prefix = self.context.clean_prefix
+
+		if not await command.can_run(self.context):
+			await botutils.error_template(self.context, message="You cannot run this command.", send=True)
 
 		try:
 			example = command.extras['example']
@@ -61,8 +66,8 @@ class JunoHelp(commands.MinimalHelpCommand):
 			example = None
 
 		embed = botutils.embed_template(
-			title=f"{self.context.clean_prefix}{self.command_name}",
-			footer=f"<>=Necessary, []=Optional.\nTo see more information about a specific command, type {self.context.clean_prefix}help <command>.\n{self.context.bot.user.display_name} was created by {self.appinfo.owner}."
+			title=f"{prefix}{self.command_name}",
+			footer=f"<>=Necessary, []=Optional.\nTo see more information about a specific command, type {prefix}help <command>.\n{self.context.bot.user.display_name} was created by {self.appinfo.owner}."
 		)
 
 		cog_name = command.cog_name
@@ -72,21 +77,22 @@ class JunoHelp(commands.MinimalHelpCommand):
 			command_description = command.description
 			embed.add_field(name="**Description**", value=command_description, inline=False)
 
-		if len(command.aliases):
+		if command.aliases:
 			aliases = [command.qualified_name]
 			if command.full_parent_name:  # If command is subcommand:
 				aliases.extend(f'{command.full_parent_name} {alias}' for alias in command.aliases)
-			aliases = [f"`{self.context.clean_prefix}{alias}`" for alias in aliases]
+			else:
+				aliases.extend(command.aliases)
+			aliases = [f"`{prefix}{alias}`" for alias in aliases]
 			embed.add_field(name="**Aliases**", value=', '.join(aliases), inline=False)
 
 		if 'permission' in command.extras:
 			embed.add_field(name="**Permissions**", value=f'You require "{self.PERMS[command.extras["permission"]]}" permissions to use this command.')
 		usage_str = f"{self.get_command_signature(command)}"
 		if example is not None:
-			usage_str += f"\nE.G.: `{self.context.clean_prefix}{self.command_name} {example}`"
+			usage_str += f"\nE.G.: `{prefix}{self.command_name} {example}`"
 		embed.add_field(name="**Usage**", value=usage_str, inline=False)
 
-		destination = self.get_destination()
 		await destination.send(embed=embed)
 
 	async def send_cog_help(self, cog):

@@ -261,11 +261,11 @@ class DevCog(commands.Cog):
 
 	@commands.command()
 	async def format(self, ctx: commands.Context):
-		if ctx.message.reference:
-			if len(ctx.message.reference.resolved.embeds) == 0:
-				output = ctx.message.reference.resolved.content
+		if reference_msg := ctx.message.reference.resolved:
+			if len(reference_msg.embeds) == 0:
+				output = reference_msg.content
 			else:
-				output = ctx.message.reference.resolved.embeds[0].description
+				output = reference_msg.embeds[0].description
 			with io.StringIO(output) as file:
 				# noinspection PyTypeChecker
 				await ctx.send("Here's the formatted message:",

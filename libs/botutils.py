@@ -6,6 +6,7 @@ import typing
 from argparse import ArgumentParser
 from datetime import datetime
 from typing import Optional
+from warnings import deprecated
 
 import discord
 from discord.ext import commands
@@ -22,6 +23,7 @@ config = parse_config("config.toml")
 GreedyAttachments = commands.Greedy[discord.Attachment]
 
 
+@deprecated("Will use interaction buttons in the future instead.")
 async def reaction_decision(bot: commands.Bot, ctx: commands.Context, check_str: str) -> bool:
 	check_message = await ctx.send(check_str)
 	await check_message.add_reaction("\U00002705")
@@ -37,6 +39,7 @@ async def reaction_decision(bot: commands.Bot, ctx: commands.Context, check_str:
 		return True
 	elif str(reaction.emoji) == "\U0000274c":
 		return False
+	return False
 
 
 async def is_not_report_banned(ctx: commands.Context) -> bool:

@@ -2,8 +2,10 @@ import calendar
 import io
 import json
 import random
+import re
 import typing
 from copy import copy
+from datetime import datetime
 
 import discord
 from discord.ext import commands
@@ -216,6 +218,34 @@ class DevCog(commands.Cog):
 			embed = botutils.embed_template(title=f"`{color_name}` (`discord.Color.{color_name}()`)", footer=f'#{hex_color}', color=color, image=img)
 			embeds.append(embed)  # TODO: Finish this (make less messages per embed)
 			await ctx.send("", embed=embed)
+
+	@test_base.command(name="find")
+	async def test_find(self, ctx: commands.Context, channel: discord.TextChannel):
+		SPOILER_PATTERN = re.compile(r"\|\|.*\|\|")
+
+		async def msg_filter(msg: discord.Message) -> bool:
+			if msg.author.id != 498606108836102164:
+				return False
+
+			if SPOILER_PATTERN.search(msg.content):
+				botutils.log("Found spoiler in content")
+				return True
+			for attachment in msg.attachments:
+				if attachment.is_spoiler():
+					botutils.log("Found spoiler in attachment")
+					return True
+			return False
+
+		await ctx.send("Looping through history...")
+		async with ctx.typing():
+			messages = [message async for message in channel.history(limit=None, after=datetime(year=2026, month=6, day=23), oldest_first=True) if await msg_filter(message)]
+
+		if messages:
+			await ctx.send(f"{ctx.author.mention} Found {len(messages)} messages.")
+			for message in messages:
+				await message.forward(ctx.channel)
+		else:
+			await ctx.send(f"{ctx.author.mention} Found nothing.")
 
 	@commands.command(aliases=('autoerror',))
 	async def auto_error(self, ctx: commands.Context):
